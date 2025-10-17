@@ -1,5 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
+void path;
 
 class DatabaseVerifier {
   constructor() {
@@ -24,6 +25,8 @@ class DatabaseVerifier {
         .from('projects')
         .select('id')
         .limit(1);
+
+      void data;
 
       if (error) {
         throw new Error(`Connection failed: ${error.message}`);

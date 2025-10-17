@@ -124,9 +124,9 @@ class AuthService {
         throw new Error('An account with this email already exists');
       }
 
-  // Hash password (acknowledge variable for potential future use)
-  const hashedPassword = await bcrypt.hash(password, 12);
-  void hashedPassword;
+      // Hash password (acknowledge variable for potential future use)
+      const hashedPassword = await bcrypt.hash(password, 12);
+      void hashedPassword;
 
       // Create user with Supabase Auth
       const { data: authUser, error: authError } = await supabase.auth.signUp({

@@ -237,3 +237,4 @@ class BackgroundService {
 
 // Initialize background service
 const backgroundService = new BackgroundService();
+void backgroundService;

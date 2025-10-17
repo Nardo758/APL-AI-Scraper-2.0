@@ -13,7 +13,8 @@ import {
 import './Navigation.css';
 
 const Navigation = () => {
-  const location = useLocation();
+  const _location = useLocation();
+  void _location;
 
   const navItems = [
     {

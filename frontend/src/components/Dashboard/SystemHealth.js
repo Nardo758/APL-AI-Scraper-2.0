@@ -34,6 +34,7 @@ const SystemHealth = ({ supabase }) => {
           .from('system_health')
           .select('*')
           .limit(1);
+        void dbTest;
         const dbLatency = Date.now() - dbStart;
 
         // Get proxy status

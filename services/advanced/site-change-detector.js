@@ -105,10 +105,9 @@ class SiteChangeDetector {
         return;
       }
 
-    // Compare with baseline
-    const changes = await this.analyzeChanges(baseline, testResult.data);
-    void changes; // acknowledged for linter; used later when significant
-      
+      // Compare with baseline
+      const changes = await this.analyzeChanges(baseline, testResult.data);
+      // acknowledged for linter; used below when significant
       if (changes.significant) {
         await this.handleSignificantChange(templateId, changes, template);
       } else {
@@ -216,6 +215,7 @@ class SiteChangeDetector {
 
   async analyzeContentPatterns(baseline, current) {
     const changes = [];
+    void changes; // acknowledged for linter; returned at end
     
     try {
       // Use AI to analyze content patterns

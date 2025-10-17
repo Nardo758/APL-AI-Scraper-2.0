@@ -86,6 +86,7 @@ class JobQueue {
 
     // Worker event handlers
     this.worker.on('completed', (job, result) => {
+      void result; // acknowledged for linter
       console.log(`âœ… Job ${job.data.jobId} completed successfully`);
     });
 

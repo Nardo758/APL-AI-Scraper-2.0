@@ -15,7 +15,7 @@ async function checkDatabaseHealth() {
     } catch (e) {
       supabase = require('../core/supabase').supabase;
     }
-    const { data, error } = await supabase.from('health_check').select('*').limit(1);
+    const { error } = await supabase.from('health_check').select('*').limit(1);
     return {
       status: error ? 'unhealthy' : 'healthy',
       responseTime: Date.now() - start,

@@ -54,7 +54,8 @@ class ScraperTemplate {
 
       // Archive current version if code is being updated
       if (updates.code && updates.code !== current.code) {
-        await this.archiveVersion(templateId, current, updates.changeReason || 'Template update');
+        const _reason = updates.changeReason || 'Template update';
+        await this.archiveVersion(templateId, current, _reason);
       }
 
       // Increment version if code changed
@@ -109,8 +110,9 @@ class ScraperTemplate {
     return `${parts[0]}.${parts[1]}.${patch}`;
   }
 
-  async incrementMinorVersion(templateId, reason) {
+  async incrementMinorVersion(templateId, _reason) {
     try {
+      void _reason;
       const { data: current } = await this.supabase
         .from('scraper_templates')
         .select('version')

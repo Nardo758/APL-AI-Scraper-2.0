@@ -19,10 +19,14 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  // Intentionally run once on mount: loadDashboardData and setupRealtimeSubscriptions
+  // adding the functions to deps would cause re-subscription in certain Supabase clients.
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     loadDashboardData();
     setupRealtimeSubscriptions();
   }, []);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const loadDashboardData = async () => {
     try {

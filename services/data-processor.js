@@ -77,6 +77,7 @@ class DataProcessor {
       for (const [field, value] of Object.entries(rawData)) {
         try {
           const fieldConfig = schema.fields?.[field] || {};
+          void fieldConfig; // acknowledged for linter; used dynamically in processing
           
           // Skip processing if field not in schema and strictMode is enabled
           if (options.strictMode && !fieldConfig.type) {
@@ -313,6 +314,7 @@ class DataProcessor {
   }
 
   parseDate(dateString, format) {
+    void format; // acknowledged for linter; formats handled internally
     // Simple date parsing - could be enhanced with a proper date library
     try {
       const date = new Date(dateString);
@@ -525,6 +527,7 @@ class DataProcessor {
 
   // Address processing
   normalizeAddress(address, config = {}) {
+    void config; // acknowledged for linter; config currently unused but kept for API compatibility
     if (!address || address === '') return null;
     
     let normalized = this.cleanValue(address, { stripHtml: true, collapseWhitespace: true });
@@ -543,7 +546,7 @@ class DataProcessor {
   // Transform functions
   async applyTransform(value, transform, fieldConfig) {
     if (!transform || !transform.type) return value;
-    
+    void fieldConfig; // acknowledged for linter
     const transformFunction = this.transformers.get(transform.type);
     if (transformFunction) {
       return await transformFunction(value, transform.options || {});

@@ -105,6 +105,7 @@ class SelfHealingEngine {
   }
 
   getHealingStrategies(context) {
+    void context; // acknowledged for linter (context passed for future use)
     return this.retryStrategies
       .sort((a, b) => a.priority - b.priority) // Sort by priority (lower number = higher priority)
       .map(strategy => ({

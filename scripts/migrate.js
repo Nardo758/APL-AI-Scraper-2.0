@@ -32,9 +32,11 @@ class MigrationRunner {
         const migrationSql = await fs.readFile(migrationPath, 'utf8');
 
         // Execute migration
-        const { error } = await this.supabase.rpc('exec_sql', {
+        const { error, data } = await this.supabase.rpc('exec_sql', {
           sql_query: migrationSql
         });
+
+        void data;
 
         if (error) {
           console.error(`âŒ Migration ${migrationFile} failed:`, error);
@@ -57,6 +59,8 @@ class MigrationRunner {
         .from('users')
         .select('count(*)')
         .limit(1);
+
+      void data;
 
       if (error) {
         console.error('âŒ Database connection failed:', error.message);

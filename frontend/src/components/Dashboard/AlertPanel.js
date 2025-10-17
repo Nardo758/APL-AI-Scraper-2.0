@@ -7,7 +7,7 @@ import {
   X,
   Bell,
   BellOff,
-  Filter,
+  // Filter,
   RefreshCw
 } from 'lucide-react';
 

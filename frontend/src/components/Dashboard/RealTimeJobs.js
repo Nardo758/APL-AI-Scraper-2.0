@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  Play, 
+  // Play, 
   Pause, 
   Clock, 
   AlertCircle,

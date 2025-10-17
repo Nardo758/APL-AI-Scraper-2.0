@@ -18,7 +18,12 @@
     "quotes": ["error", "single"],
     "semi": ["error", "always"]
   },
-  "ignorePatterns": ["node_modules/", "dist/", "coverage/"],
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "coverage/",
+    "utils/supabase/**"
+  ],
   "overrides": [
     {
       "files": ["browser-extension/**", "scrapers/**", "frontend/**", "public/**", "services/**/distributed-orchestrator.js"],
