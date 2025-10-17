@@ -1,0 +1,302 @@
+/* APL AI Scraper Recorder - UI Styles */
+
+.apl-recorder-overlay {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 2147483647 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  color: #333 !important;
+  pointer-events: auto !important;
+  user-select: none !important;
+}
+
+.apl-recorder-panel {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  min-width: 280px !important;
+  max-width: 320px !important;
+  overflow: hidden !important;
+}
+
+.apl-recorder-header {
+  background: rgba(255, 255, 255, 0.1) !important;
+  padding: 12px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: grab !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.apl-recorder-header:active {
+  cursor: grabbing !important;
+}
+
+.apl-recorder-logo {
+  font-size: 18px !important;
+  margin-right: 8px !important;
+}
+
+.apl-recorder-title {
+  font-weight: 600 !important;
+  color: white !important;
+  flex: 1 !important;
+}
+
+.apl-recorder-minimize {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: white !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.2s !important;
+}
+
+.apl-recorder-minimize:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.apl-recorder-content {
+  padding: 16px !important;
+  color: white !important;
+}
+
+.apl-recorder-overlay.minimized .apl-recorder-panel {
+  min-width: 200px !important;
+}
+
+.apl-recorder-status {
+  margin-bottom: 16px !important;
+  text-align: center !important;
+}
+
+.status-indicator {
+  background: rgba(255, 255, 255, 0.1) !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  font-weight: 500 !important;
+  display: inline-block !important;
+}
+
+.apl-recorder-controls {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-bottom: 16px !important;
+}
+
+.apl-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: white !important;
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.apl-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-1px) !important;
+}
+
+.apl-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+.apl-btn-start {
+  background: linear-gradient(135deg, #ff6b6b, #ff5252) !important;
+}
+
+.apl-btn-stop {
+  background: linear-gradient(135deg, #ff9800, #f57c00) !important;
+}
+
+.apl-btn-screenshot {
+  background: linear-gradient(135deg, #4caf50, #388e3c) !important;
+}
+
+.apl-recorder-info {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+  font-size: 12px !important;
+}
+
+.info-item {
+  background: rgba(255, 255, 255, 0.1) !important;
+  padding: 8px !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+}
+
+.info-label {
+  display: block !important;
+  font-weight: 500 !important;
+  margin-bottom: 2px !important;
+  opacity: 0.8 !important;
+}
+
+/* Screenshot Preview */
+.apl-screenshot-preview {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2147483648 !important;
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
+  overflow: hidden !important;
+  animation: apl-fade-in 0.3s ease !important;
+}
+
+.preview-content {
+  padding: 16px !important;
+  text-align: center !important;
+}
+
+.preview-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+
+.preview-close {
+  background: #f0f0f0 !important;
+  border: none !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.preview-footer {
+  margin-top: 12px !important;
+  color: #666 !important;
+}
+
+/* Save Messages */
+.apl-save-message {
+  position: fixed !important;
+  top: 80px !important;
+  right: 20px !important;
+  z-index: 2147483647 !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+  animation: apl-slide-in 0.3s ease !important;
+  max-width: 300px !important;
+}
+
+.apl-save-success {
+  background: linear-gradient(135deg, #4caf50, #45a049) !important;
+  color: white !important;
+}
+
+.apl-save-error {
+  background: linear-gradient(135deg, #f44336, #d32f2f) !important;
+  color: white !important;
+}
+
+.message-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.message-icon {
+  font-size: 18px !important;
+}
+
+.message-text {
+  font-weight: 600 !important;
+}
+
+.message-id, .message-error {
+  font-size: 12px !important;
+  opacity: 0.9 !important;
+  word-break: break-all !important;
+}
+
+.message-close {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: white !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+}
+
+/* Animations */
+@keyframes apl-fade-in {
+  from {
+    opacity: 0 !important;
+    transform: translate(-50%, -50%) scale(0.8) !important;
+  }
+  to {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+}
+
+@keyframes apl-slide-in {
+  from {
+    opacity: 0 !important;
+    transform: translateX(100%) !important;
+  }
+  to {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .apl-recorder-overlay {
+    top: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+  }
+  
+  .apl-recorder-panel {
+    min-width: unset !important;
+    max-width: unset !important;
+  }
+  
+  .apl-recorder-info {
+    grid-template-columns: 1fr !important;
+  }
+}

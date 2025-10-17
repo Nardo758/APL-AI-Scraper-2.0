@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APL AI Scraper Recorder</title>
+  <style>
+    body {
+      width: 350px;
+      min-height: 400px;
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      opacity: 0.8;
+      margin: 4px 0 0 0;
+    }
+
+    .status-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .status-indicator {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .status-details {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ff6b6b, #ff5252);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #4caf50, #388e3c);
+    }
+
+    .settings {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 4px;
+      opacity: 0.8;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .input-field::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🤖</div>
+    <h1 class="title">APL AI Scraper</h1>
+    <p class="subtitle">Record & Generate Scraping Code</p>
+  </div>
+
+  <div class="status-card">
+    <div class="status-indicator" id="status-text">⚫ Not Recording</div>
+    <div class="status-details" id="status-details">Ready to start recording</div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" id="start-btn">
+      🔴 Start Recording
+    </button>
+    <button class="btn btn-secondary" id="stop-btn" disabled>
+      ⏹️ Stop Recording
+    </button>
+    <button class="btn" id="screenshot-btn">
+      📸 Take Screenshot
+    </button>
+  </div>
+
+  <div class="stats">
+    <div class="stat-item">
+      <span class="stat-value" id="action-count">0</span>
+      Actions
+    </div>
+    <div class="stat-item">
+      <span class="stat-value" id="screenshot-count">0</span>
+      Screenshots
+    </div>
+  </div>
+
+  <div class="settings">
+    <div class="input-group">
+      <label class="input-label">Server URL</label>
+      <input type="text" class="input-field" id="server-url" placeholder="http://localhost:3000">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Project ID (Optional)</label>
+      <input type="text" class="input-field" id="project-id" placeholder="Enter project ID">
+    </div>
+    <button class="btn" id="save-settings-btn">💾 Save Settings</button>
+  </div>
+
+  <div class="footer">
+    <p>APL AI Scraper v1.0.0</p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

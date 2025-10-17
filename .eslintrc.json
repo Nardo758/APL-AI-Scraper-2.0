@@ -1,0 +1,57 @@
+{
+  "env": {
+    "node": true,
+    "jest": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-console": "off",
+    "indent": ["error", 2],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"]
+  },
+  "ignorePatterns": ["node_modules/", "dist/", "coverage/"],
+  "overrides": [
+    {
+      "files": ["browser-extension/**", "scrapers/**", "frontend/**", "public/**", "services/**/distributed-orchestrator.js"],
+      "env": {
+        "browser": true,
+        "es2021": true
+      },
+      "globals": {
+        "chrome": "readonly",
+        "html2canvas": "readonly",
+        "DOMParser": "readonly",
+        "Node": "readonly",
+        "MouseEvent": "readonly",
+        "Notification": "readonly",
+        "navigator": "readonly",
+        "window": "readonly",
+        "document": "readonly"
+      },
+      "rules": {
+        "no-irregular-whitespace": "off"
+      }
+    },
+    {
+      "files": ["services/**/captcha-*.js", "services/**/self-healing-*.js"],
+      "env": {
+        "browser": true
+      },
+      "globals": {
+        "DOMParser": "readonly",
+        "navigator": "readonly",
+        "window": "readonly",
+        "document": "readonly"
+      }
+    }
+  ]
+}
