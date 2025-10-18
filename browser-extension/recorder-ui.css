@@ -10,14 +10,18 @@
   line-height: 1.4 !important;
   color: #333 !important;
   pointer-events: auto !important;
-  user-select: none !important;
+  -webkit-user-select: none !important; /* Safari 3+, iOS Safari */
+  -moz-user-select: none !important;    /* Firefox */
+  -ms-user-select: none !important;     /* IE 10+ */
+  user-select: none !important;         /* Standard */
 }
 
 .apl-recorder-panel {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   border-radius: 12px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important; /* Safari 9+, iOS Safari */
+  backdrop-filter: blur(10px) !important;         /* Standard */
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   min-width: 280px !important;
   max-width: 320px !important;

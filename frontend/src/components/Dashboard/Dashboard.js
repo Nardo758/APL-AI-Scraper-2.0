@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSupabase } from '../../contexts/SupabaseContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import MetricsOverview from './MetricsOverview';
@@ -19,16 +19,34 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // Intentionally run once on mount: loadDashboardData and setupRealtimeSubscriptions
-  // adding the functions to deps would cause re-subscription in certain Supabase clients.
-  /* eslint-disable react-hooks/exhaustive-deps */
-  useEffect(() => {
-    loadDashboardData();
-    setupRealtimeSubscriptions();
-  }, []);
-  /* eslint-enable react-hooks/exhaustive-deps */
+  const handleJobUpdate = useCallback((payload) => {
+    if (payload.eventType === 'INSERT' && payload.new.status === 'running') {
+      // New job started
+      setDashboardData(prev => ({
+        ...prev,
+        activeJobs: [payload.new, ...prev.activeJobs.slice(0, 9)],
+        recentActivity: [payload.new, ...prev.recentActivity.slice(0, 19)]
+      }));
+    } else if (payload.eventType === 'UPDATE') {
+      // Job status changed
+      setDashboardData(prev => ({
+        ...prev,
+        activeJobs: prev.activeJobs.map(job => 
+          job.id === payload.new.id ? payload.new : job
+        ).filter(job => job.status === 'running'),
+        recentActivity: [payload.new, ...prev.recentActivity.slice(0, 19)]
+      }));
 
-  const loadDashboardData = async () => {
+      // Show notification for completed/failed jobs
+      if (payload.new.status === 'completed') {
+        addNotification('success', `Job completed: ${payload.new.url}`);
+      } else if (payload.new.status === 'failed') {
+        addNotification('error', `Job failed: ${payload.new.url}`);
+      }
+    }
+  }, [addNotification]);
+
+  const loadDashboardData = useCallback(async () => {
     try {
       // Load dashboard metrics from API
       const response = await fetch('/api/dashboard/metrics');
@@ -71,9 +89,9 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase, addNotification]);
 
-  const setupRealtimeSubscriptions = () => {
+  const setupRealtimeSubscriptions = useCallback(() => {
     // Real-time job updates
     const jobSubscription = supabase
       .channel('jobs-channel')
@@ -103,34 +121,22 @@ const Dashboard = () => {
       jobSubscription.unsubscribe();
       healthSubscription.unsubscribe();
     };
-  };
+  }, [supabase, handleJobUpdate]);
 
-  const handleJobUpdate = (payload) => {
-    if (payload.eventType === 'INSERT' && payload.new.status === 'running') {
-      // New job started
-      setDashboardData(prev => ({
-        ...prev,
-        activeJobs: [payload.new, ...prev.activeJobs.slice(0, 9)],
-        recentActivity: [payload.new, ...prev.recentActivity.slice(0, 19)]
-      }));
-    } else if (payload.eventType === 'UPDATE') {
-      // Job status changed
-      setDashboardData(prev => ({
-        ...prev,
-        activeJobs: prev.activeJobs.map(job => 
-          job.id === payload.new.id ? payload.new : job
-        ).filter(job => job.status === 'running'),
-        recentActivity: [payload.new, ...prev.recentActivity.slice(0, 19)]
-      }));
+  // loadDashboardData and setupRealtimeSubscriptions are stable via useCallback
+  // and safe to include in the effect deps so subscriptions won't re-subscribe
+  // unnecessarily when their references are stable.
+  useEffect(() => {
+    let cleanup = null;
+    (async () => {
+      await loadDashboardData();
+      cleanup = setupRealtimeSubscriptions();
+    })();
 
-      // Show notification for completed/failed jobs
-      if (payload.new.status === 'completed') {
-        addNotification('success', `Job completed: ${payload.new.url}`);
-      } else if (payload.new.status === 'failed') {
-        addNotification('error', `Job failed: ${payload.new.url}`);
-      }
-    }
-  };
+    return () => {
+      if (typeof cleanup === 'function') cleanup();
+    };
+  }, [loadDashboardData, setupRealtimeSubscriptions]);
 
   const handleNewScrapingJob = () => {
     // Navigate to scrapers page or show job creation modal

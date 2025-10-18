@@ -101,11 +101,11 @@ class CacheManager extends EventEmitter {
      */
   async connectToRedis() {
     try {
-      this.redis = createClient({
+      this.redis = createClient(/** @type {any} */ ({
         url: process.env.REDIS_URL || 'redis://localhost:6379',
         retry_delay_on_failure: 1000,
         max_attempts: 3
-      });
+      }));
 
       this.redis.on('error', (err) => {
         logger.error('Redis connection error', { error: err.message });

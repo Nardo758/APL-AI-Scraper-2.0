@@ -363,8 +363,11 @@ class CaptchaHandler {
         Return only the answer, nothing else.
       `;
 
-      const result = await this.aiService.callClaude(prompt);
-      return result.trim();
+      // callClaude is implemented at runtime by our AI service. Cast to any
+      // to avoid check-js/type complaints during type-checking.
+      const ai = /** @type {any} */ (this.aiService);
+      const result = await ai.callClaude(prompt);
+      return String(result).trim();
     } catch (error) {
       console.error('âŒ AI text CAPTCHA solving failed:', error);
       return null;
@@ -456,7 +459,7 @@ class CaptchaHandler {
           method: captchaType === 'hcaptcha' ? 'hcaptcha' : 'userrecaptcha',
           googlekey: siteKey,
           pageurl: pageUrl,
-          json: 1
+          json: '1'
         })
       });
 
