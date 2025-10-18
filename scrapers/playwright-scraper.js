@@ -143,16 +143,18 @@ class PlaywrightScraper {
         get: () => ['en-US', 'en'],
       });
 
-      // Remove automation indicators
-      window.chrome = {
+      // Remove automation indicators (use globalThis to avoid type complaints)
+      (globalThis).chrome = {
         runtime: {},
       };
 
-      // Mock permissions
+      // Mock permissions: return a PermissionStatus-like object cast to any so
+      // our check-js/type-checking environment does not complain about missing
+      // DOM types.
       const originalQuery = window.navigator.permissions.query;
       window.navigator.permissions.query = (parameters) => (
         parameters.name === 'notifications' ?
-          Promise.resolve({ state: Notification.permission }) :
+          Promise.resolve(/** @type {any} */ ({ state: Notification.permission })) :
           originalQuery(parameters)
       );
     });

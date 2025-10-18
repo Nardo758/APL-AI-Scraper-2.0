@@ -10,6 +10,21 @@ class ApiGateway {
     this.supabase = null; // Will be injected
     this.jobQueue = null; // Will be injected
     this.webhookManager = null; // Will be injected
+    // Ensure methods referenced by router are present for TypeScript/JSDoc inference
+    // (Minimal no-op placeholders; real implementations exist later in file.)
+    this.cancelJob = this.cancelJob || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.getExportStatus = this.getExportStatus || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.listTemplates = this.listTemplates || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.getTemplate = this.getTemplate || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.createTemplate = this.createTemplate || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.updateTemplate = this.updateTemplate || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.listWebhooks = this.listWebhooks || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.createWebhook = this.createWebhook || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.updateWebhook = this.updateWebhook || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.deleteWebhook = this.deleteWebhook || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.testWebhook = this.testWebhook || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.getUsageAnalytics = this.getUsageAnalytics || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
+    this.getPerformanceAnalytics = this.getPerformanceAnalytics || (async (req, res) => { res.status(501).json({ error: 'Not implemented' }); });
     
     this.setupMiddleware();
     this.setupRoutes();

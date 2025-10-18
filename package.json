@@ -103,8 +103,10 @@
   "devDependencies": {
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.75.1",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/next": "^8.0.7",
-    "@types/node": "^20.10.0",
+    "@types/node": "^20.19.22",
     "babel-jest": "^29.7.0",
     "bcryptjs": "^3.0.2",
     "buffer-from": "^1.1.2",

@@ -40,11 +40,12 @@ class EncryptionService {
 
       const plaintext = typeof data === 'string' ? data : JSON.stringify(data);
       const iv = crypto.randomBytes(this.ivLength);
-      const cipher = crypto.createCipheriv(this.algorithm, key, iv, { authTagLength: 16 });
+      /** @type {any} */
+      const cipher = crypto.createCipheriv(this.algorithm, key, iv, /** @type {any} */ ({ authTagLength: 16 }));
 
       let encrypted = cipher.update(plaintext, 'utf8', 'hex');
       encrypted += cipher.final('hex');
-      const authTag = cipher.getAuthTag();
+      const authTag = /** @type {any} */ (cipher).getAuthTag();
 
       return {
         encryptedData: encrypted,
@@ -68,8 +69,9 @@ class EncryptionService {
       const { encryptedData, iv, authTag, metadata, checksum } = encryptionResult;
       if (!key) key = await this.getEncryptionKey(metadata.keyVersion || 'current');
 
-      const decipher = crypto.createDecipheriv(this.algorithm, key, Buffer.from(iv, 'hex'), { authTagLength: 16 });
-      decipher.setAuthTag(Buffer.from(authTag, 'hex'));
+      /** @type {any} */
+      const decipher = crypto.createDecipheriv(this.algorithm, key, Buffer.from(iv, 'hex'), /** @type {any} */ ({ authTagLength: 16 }));
+      /** @type {any} */ (decipher).setAuthTag(Buffer.from(authTag, 'hex'));
 
       let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
       decrypted += decipher.final('utf8');

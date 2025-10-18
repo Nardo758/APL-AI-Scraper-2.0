@@ -263,7 +263,7 @@ app.get('/api/projects/:projectId/jobs', async (req, res) => {
       .select('*')
       .eq('project_id', projectId)
       .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .range(require('./utils/parse-number').parseNumber(offset, 0), require('./utils/parse-number').parseNumber(offset, 0) + require('./utils/parse-number').parseNumber(limit, 0) - 1);
 
     if (status) {
       query = query.eq('status', status);
@@ -376,7 +376,7 @@ app.get('/api/training-sessions', async (req, res) => {
       .from('training_sessions')
       .select('id, project_id, status, created_at, recording_data')
       .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .range(require('./utils/parse-number').parseNumber(offset, 0), require('./utils/parse-number').parseNumber(offset, 0) + require('./utils/parse-number').parseNumber(limit, 0) - 1);
 
     if (project_id) {
       query = query.eq('project_id', project_id);
@@ -610,7 +610,7 @@ app.get('/api/templates', async (req, res) => {
     
     const templates = await scraperTemplate.listTemplates(project_id, {
       status,
-      limit: parseInt(limit) || undefined
+      limit: require('./utils/parse-number').parseNumber(limit) || undefined
     });
 
     res.json(templates);
@@ -770,7 +770,7 @@ app.get('/api/executions', async (req, res) => {
         scraper_templates(name, version)
       `)
       .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .range(require('./utils/parse-number').parseNumber(offset, 0), require('./utils/parse-number').parseNumber(offset, 0) + require('./utils/parse-number').parseNumber(limit, 0) - 1);
 
     if (template_id) {
       query = query.eq('template_id', template_id);
@@ -999,7 +999,7 @@ app.post('/api/data/process', async (req, res) => {
 app.get('/api/analytics/captcha', async (req, res) => {
   try {
     const { template_id, days = 7 } = req.query;
-    const stats = await captchaHandler.getCaptchaStats(template_id, parseInt(days));
+    const stats = await captchaHandler.getCaptchaStats(template_id, require('./utils/parse-number').parseNumber(days));
     res.json(stats);
   } catch (error) {
     console.error('Error getting CAPTCHA analytics:', error);
@@ -1012,6 +1012,7 @@ app.get('/api/analytics/templates/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { days = 30 } = req.query;
+    const daysNum = require('./utils/parse-number').parseNumber(days, 30);
 
     // Get template metrics
     const { data: metrics, error: metricsError } = await supabase
@@ -1029,7 +1030,7 @@ app.get('/api/analytics/templates/:id', async (req, res) => {
       .from('scraping_executions')
       .select('status, execution_duration_ms, created_at')
       .eq('template_id', id)
-      .gte('created_at', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString())
+      .gte('created_at', new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000).toISOString())
       .order('created_at', { ascending: false });
 
     if (executionsError) throw executionsError;
@@ -1039,7 +1040,7 @@ app.get('/api/analytics/templates/:id', async (req, res) => {
       .from('data_quality_metrics')
       .select('*')
       .eq('template_id', id)
-      .gte('execution_date', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
+      .gte('execution_date', new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
       .order('execution_date', { ascending: false });
 
     if (qualityError) throw qualityError;
@@ -1145,8 +1146,8 @@ app.get('/api/activity', async (req, res) => {
       });
     }
 
-    // Sort all activities by timestamp
-    activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    // Sort all activities by timestamp (use numeric getTime to avoid type complaints)
+    activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     // Apply filtering
     let filteredActivities = activities;
@@ -1155,13 +1156,15 @@ app.get('/api/activity', async (req, res) => {
     }
 
     // Apply pagination
-    const paginatedActivities = filteredActivities.slice(offset, offset + parseInt(limit));
+    const offsetNum = require('./utils/parse-number').parseNumber(offset, 0);
+    const limitNum = require('./utils/parse-number').parseNumber(limit, 50);
+    const paginatedActivities = filteredActivities.slice(offsetNum, offsetNum + limitNum);
 
     res.json({
       activities: paginatedActivities,
       total: filteredActivities.length,
-      limit: parseInt(limit),
-      offset: parseInt(offset)
+      limit: limitNum,
+      offset: offsetNum
     });
 
   } catch (error) {
@@ -1183,7 +1186,7 @@ app.get('/api/alerts', async (req, res) => {
         .select('*')
         .eq('resolved', resolved === 'true')
         .order('created_at', { ascending: false })
-        .limit(parseInt(limit));
+        .limit(require('./utils/parse-number').parseNumber(limit));
 
       if (!error) {
         systemAlerts = data || [];
@@ -1283,17 +1286,19 @@ app.get('/api/alerts', async (req, res) => {
       filteredAlerts = allAlerts.filter(alert => alert.severity === severity);
     }
 
-    // Sort by creation date
-    filteredAlerts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    // Sort by creation date (use numeric getTime())
+    filteredAlerts.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     // Apply pagination
-    const paginatedAlerts = filteredAlerts.slice(offset, offset + parseInt(limit));
+    const offsetNumAlerts = require('./utils/parse-number').parseNumber(offset, 0);
+    const limitNumAlerts = require('./utils/parse-number').parseNumber(limit, 50);
+    const paginatedAlerts = filteredAlerts.slice(offsetNumAlerts, offsetNumAlerts + limitNumAlerts);
 
     res.json({
       alerts: paginatedAlerts,
       total: filteredAlerts.length,
-      limit: parseInt(limit),
-      offset: parseInt(offset),
+      limit: limitNumAlerts,
+      offset: offsetNumAlerts,
       summary: {
         critical: filteredAlerts.filter(a => a.severity === 'critical').length,
         high: filteredAlerts.filter(a => a.severity === 'high').length,
@@ -1312,7 +1317,7 @@ app.get('/api/alerts', async (req, res) => {
 app.get('/api/dashboard/metrics', async (req, res) => {
   try {
     const { days = 1 } = req.query;
-    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const startDate = new Date(Date.now() - Number(days) * 24 * 60 * 60 * 1000).toISOString();
 
     // Get execution metrics
     const { data: executions } = await supabase
@@ -1331,7 +1336,7 @@ app.get('/api/dashboard/metrics', async (req, res) => {
       ? executions.reduce((acc, e) => acc + (e.execution_time_ms || 0), 0) / executions.length / 1000
       : 0;
 
-    const jobsPerHour = totalJobs / (days * 24);
+    const jobsPerHour = totalJobs / (Number(days) * 24);
     const totalRecords = executions?.reduce((acc, e) => acc + (e.records_scraped || 0), 0) || 0;
 
     // Get template and proxy counts
@@ -1349,7 +1354,7 @@ app.get('/api/dashboard/metrics', async (req, res) => {
 
     res.json({
       period: {
-        days: parseInt(days),
+        days: Number(days),
         start_date: startDate,
         end_date: new Date().toISOString()
       },

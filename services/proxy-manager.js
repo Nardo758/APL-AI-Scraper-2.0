@@ -249,13 +249,13 @@ class ProxyManager {
       const testUrl = 'https://httpbin.org/ip';
       const proxyUrl = `http://${proxy.username ? `${proxy.username}:${proxy.password}@` : ''}${proxy.host}:${proxy.port}`;
 
-      const response = await fetch(testUrl, {
+      const response = await fetch(testUrl, /** @type {any} */ ({
         signal: controller.signal,
         method: 'GET',
         agent: proxy.type === 'socks5' ? 
-          new (require('socks-proxy-agent'))(proxyUrl) :
-          new (require('http-proxy-agent'))(proxyUrl)
-      });
+          /** @type {any} */ (new (require('socks-proxy-agent'))(proxyUrl)) :
+          /** @type {any} */ (new (require('http-proxy-agent'))(proxyUrl))
+      }));
 
       clearTimeout(timeoutId);
       const responseTime = Date.now() - startTime;

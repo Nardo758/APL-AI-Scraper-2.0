@@ -6,8 +6,9 @@ const { checkDatabaseHealth, checkRedisHealth, checkSecurityHealth } = require('
 router.get('/security-overview', async (req, res) => {
   try {
     const { days = 30 } = req.query;
+    const daysNum = require('../utils/parse-number').parseNumber(days, 30);
     // Implement a simple overview aggregation
-    const recent = await req.services.privacy.generateComplianceReport(req.query.projectId, new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString(), new Date().toISOString());
+    const recent = await req.services.privacy.generateComplianceReport(req.query.projectId, new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000).toISOString(), new Date().toISOString());
     res.json({ days, recent });
   } catch (error) {
     res.status(500).json({ error: error.message });

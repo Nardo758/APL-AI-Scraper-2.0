@@ -56,9 +56,15 @@ function fakeQuery(table) {
   return builder;
 }
 
-const supabase = {
+/**
+ * Mark the exported supabase stub as `any` for TypeScript checking so
+ * server-side code that uses the stub doesn't produce spurious type
+ * errors while iterating. This is a test/dev-only lightweight stub.
+ * @type {any}
+ */
+const supabase = /** @type {any} */ ({
   auth,
   from: (table) => fakeQuery(table)
-};
+});
 
 module.exports = { supabase };
