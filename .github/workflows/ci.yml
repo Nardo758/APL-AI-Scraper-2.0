@@ -2,9 +2,15 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+
+# Note: This workflow references GitHub Actions secrets (for example
+# `${{ secrets.SNYK_TOKEN }}`). These values are injected at runtime by
+# GitHub Actions and may trigger editor/schema warnings locally. Quoting
+# the expressions and adding this note reduces false positives while
+# preserving the correct runtime behavior.
 
 jobs:
   test:
@@ -15,10 +21,10 @@ jobs:
         node-version: [18.x, 20.x]
 
     steps:
-    - uses: actions/checkout@v4
-    
+    - uses: "actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955"
+
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -38,7 +44,7 @@ jobs:
       run: npm test -- --coverage
       
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: "codecov/codecov-action@ab904c41d6ece82784817410c45d8b8c02684457"
       with:
         file: ./coverage/lcov.info
         flags: unittests
@@ -47,10 +53,10 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
+    - uses: "actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955"
+
     - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
+      uses: "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
       with:
         node-version: 20.x
         cache: 'npm'
@@ -59,8 +65,11 @@ jobs:
       run: npm audit --audit-level moderate
       
     - name: Run Snyk security scan
-      uses: snyk/actions/node@master
+      uses: "snyk/actions/node@9adf32b1121593767fc3c057af55b55db032dc04"
+      # Note: SNYK_TOKEN is provided via GitHub Actions secrets/context.
+      # Quoting the expression reduces editor warnings and preserves
+      # runtime behavior in GitHub Actions.
       env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        SNYK_TOKEN: "${{ secrets.SNYK_TOKEN }}"
       with:
         args: --severity-threshold=high

@@ -63,7 +63,6 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.13.1",
-    "@supabase/supabase-js": "^2.38.5",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
     "bullmq": "^4.15.2",
@@ -82,6 +81,7 @@
     "json2csv": "^5.0.7",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
+    "markdownlint-cli": "^0.33.0",
     "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
@@ -101,11 +101,13 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.75.1",
+    "@types/next": "^8.0.7",
     "@types/node": "^20.10.0",
     "babel-jest": "^29.7.0",
     "bcryptjs": "^3.0.2",
     "buffer-from": "^1.1.2",
-    "coveralls": "^3.1.1",
     "eslint": "^8.55.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-react-app": "^7.0.1",
@@ -116,6 +118,7 @@
     "jest-environment-node": "^29.7.0",
     "jest-junit": "^13.0.0",
     "lint-staged": "^15.2.0",
+    "next": "^15.5.6",
     "nodemon": "^3.0.2",
     "otplib": "^12.0.1",
     "prettier": "^3.1.1",

@@ -52,6 +52,13 @@ app.use(createRateLimiter());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Compliance middleware (request logging and minimal policy enforcement)
+const { requestLogger, compliancePolicy } = require('./middleware/compliance');
+
+// Log every request to logs/requests.log for auditability
+app.use(requestLogger);
+
+
 // Initialize services
 let supabase;
 // Initialize Supabase client defensively. If SUPABASE_URL is missing, empty,
@@ -90,14 +97,8 @@ const authService = new AuthService();
 const complianceManager = new ComplianceManager();
 const privacyManager = new PrivacyManager();
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString(),
-    version: '1.0.0'
-  });
-});
+// Health route (mounted from routes/health.js)
+app.use('/', require('./routes/health'));
 
 // Request context middleware - attach services for route handlers
 app.use((req, res, next) => {
@@ -121,6 +122,9 @@ app.use((req, res, next) => {
 // Public routes (no authentication required)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/public', require('./routes/public'));
+
+// Minimal admin area protection using compliancePolicy middleware
+app.use('/admin', compliancePolicy, (req, res, next) => next());
 
 // Compliance check for all scraping requests
 app.use('/api/scrape', async (req, res, next) => {

@@ -2,9 +2,15 @@ name: Test Matrix
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+
+# Note: This workflow references GitHub Actions secrets (for example
+# `${{ secrets.SUPABASE_ANON_KEY }}` or `${{ secrets.SNYK_TOKEN }}`). Those
+# secrets are injected at runtime by GitHub Actions and may be flagged by
+# some editor/schema checkers. Quoting the expressions reduces false
+# positive warnings while keeping runtime behavior intact.
 
 jobs:
   test-stubbed:
@@ -84,9 +90,11 @@ jobs:
         done
         
     - name: Run tests with real services
+      # Note: SUPABASE_URL and SUPABASE_ANON_KEY are provided via
+      # GitHub Actions secrets/context in the repository settings.
       env:
-        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
+        SUPABASE_ANON_KEY: "${{ secrets.SUPABASE_ANON_KEY }}"
         REDIS_URL: redis://localhost:6379
       run: |
         npm run test:all
@@ -115,9 +123,12 @@ jobs:
       run: npm audit --audit-level moderate
       
     - name: Run Snyk security scan
-      uses: snyk/actions/node@master
+      uses: snyk/actions/node@v3
+      # Note: SNYK_TOKEN is provided via GitHub Actions secrets/context. The
+      # expression is quoted to reduce editor warnings and preserve runtime
+      # behavior in GitHub Actions.
       env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        SNYK_TOKEN: "${{ secrets.SNYK_TOKEN }}"
       with:
         args: --severity-threshold=high --sarif-file-output=snyk.sarif
         

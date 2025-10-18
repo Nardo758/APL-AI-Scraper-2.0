@@ -297,13 +297,15 @@ class ScraperTemplate {
     if (!prevValue || !currValue) return null;
 
     // Detect common format changes
-    /* eslint-disable no-useless-escape */
-    const prevIsPrice = /[$€£¥]\s*[\d,.]+|[\d,.]+\s*[$€£¥]/i.test(prevValue);
-    const currIsPrice = /[$€£¥]\s*[\d,.]+|[\d,.]+\s*[$€£¥]/i.test(currValue);
+    // Use RegExp constructor to avoid needing to escape '/' inside literal delimiters
+    const pricePattern = new RegExp('[$€£¥]\\s*[\\d,.]+|[\\d,.]+\\s*[$€£¥]', 'i');
+    const datePattern = new RegExp('\\d{1,2}[-/]\\d{1,2}[-/]\\d{2,4}|\\d{4}[-/]\\d{1,2}[-/]\\d{1,2}');
 
-    const prevIsDate = /\d{1,2}[-\/]\d{1,2}[-\/]\d{2,4}|\d{4}[-\/]\d{1,2}[-\/]\d{1,2}/.test(prevValue);
-    const currIsDate = /\d{1,2}[-\/]\d{1,2}[-\/]\d{2,4}|\d{4}[-\/]\d{1,2}[-\/]\d{1,2}/.test(currValue);
-    /* eslint-enable no-useless-escape */
+    const prevIsPrice = pricePattern.test(prevValue);
+    const currIsPrice = pricePattern.test(currValue);
+
+    const prevIsDate = datePattern.test(prevValue);
+    const currIsDate = datePattern.test(currValue);
 
     if (prevIsPrice !== currIsPrice) return 'price_format_change';
     if (prevIsDate !== currIsDate) return 'date_format_change';
