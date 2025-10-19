@@ -1,10 +1,9 @@
 # APL AI Scraper 2.0
-````markdown
 # APL AI Scraper 2.0
-
 APL AI Scraper 2.0 is a visual web scraping platform that combines
 vision-capable models, assistant models, and Playwright automation to
 provide intelligent scraping workflows.
+ 
 
 ## Quick start
 

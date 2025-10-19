@@ -1,13 +1,6 @@
 ﻿# APL AI Scraper 2.0
 
-APL AI Scraper 2.0 is an AI-assisted visual web scraper. The project
-combines Playwright automation with optional AI-based analysis to give
-````markdown
-# APL AI Scraper 2.0
-
-APL AI Scraper 2.0 is an AI-assisted visual web scraper. The project
-combines Playwright automation with optional AI-based analysis to give
-visual extraction and structured data workflows.
+APL AI Scraper 2.0 is an AI-assisted visual web scraper. The project combines Playwright automation with optional AI-based analysis to give visual extraction and structured data workflows.
 
 ## Quick start
 
@@ -28,19 +21,19 @@ git clone https://github.com/Nardo758/APL-AI-Scraper-2.0.git
 cd APL-AI-Scraper-2.0
 ```
 
-2. Install dependencies.
+1. Install dependencies.
 
 ```bash
 npm install
 ```
 
-3. Copy the example env file and update values.
+1. Copy the example env file and update values.
 
 ```bash
 cp .env.example .env
 ```
 
-4. Start required services (if used) and run the app.
+1. Start required services (if used) and run the app.
 
 ```bash
 # start redis if you use it (optional)
@@ -83,7 +76,6 @@ npm run test:stubbed
 ## License
 
 MIT
-
 
 ## Migration runner
 
@@ -150,7 +142,7 @@ jobs:
 
 # jobs:
 #   apply-migrations:
-#     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+#     if: github.ref == 'refs/heads.main' || startsWith(github.ref, 'refs/tags/')
 #     runs-on: ubuntu-latest
 #     steps:
 #       - uses: actions/checkout@v4
@@ -164,8 +156,4 @@ jobs:
 #         env:
 #           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 #         run: node ./scripts/run-migrations.js apply --yes
-```
-```bash
-# start redis if you use it (optional)
-redis-server
 ```

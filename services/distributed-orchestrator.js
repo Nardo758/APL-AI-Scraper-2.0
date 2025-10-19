@@ -4,6 +4,34 @@ const { createClient } = require('@supabase/supabase-js');
 const { chromium } = require('playwright');
 const vm = require('vm');
 
+/**
+ * @typedef {Object} Template
+ * @property {string} id
+ * @property {string} code
+ * @property {Object} [config]
+ */
+
+/**
+ * @typedef {Object} JobOptions
+ * @property {number} [timeout]
+ * @property {number} [retries]
+ * @property {string} [proxy]
+ * @property {string} [userAgent]
+ * @property {boolean} [headless]
+ * @property {boolean} [captchaSolving]
+ * @property {boolean} [dataValidation]
+ * @property {number} [delay]
+ * @property {number} [stagger]
+ * @property {'high'|'low'|'normal'} [priority]
+ */
+
+/**
+ * @typedef {Object} WorkerConfig
+ * @property {string} name
+ * @property {string[]} queues
+ * @property {number} concurrency
+ */
+
 class DistributedOrchestrator {
   constructor() {
     this.redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
@@ -120,6 +148,11 @@ class DistributedOrchestrator {
     }
   }
 
+  /**
+   * @param {Template} template
+   * @param {string[]|string} urls
+   * @param {JobOptions} [options]
+   */
   async scheduleJob(template, urls, options = {}) {
     try {
       if (!Array.isArray(urls)) {
@@ -205,6 +238,9 @@ class DistributedOrchestrator {
     }
   }
 
+  /**
+   * @param {WorkerConfig[]} workerConfigs
+   */
   async startWorkers(workerConfigs = []) {
     try {
       // Default worker configurations if none provided
@@ -273,6 +309,9 @@ class DistributedOrchestrator {
     }
   }
 
+  /**
+   * @param {any} job
+   */
   async processScrapingJob(job) {
     const startTime = Date.now();
     const { templateCode, templateConfig, url, options, executionId } = job.data;
@@ -509,6 +548,13 @@ class DistributedOrchestrator {
     }
   }
 
+  /**
+   * @param {string} executionId
+   * @param {any} status
+   * @param {Object} [metadata]
+   * @param {any} [result]
+   * @param {Object} [resultMetadata]
+   */
   async updateExecutionStatus(executionId, status, metadata = {}, result = null, resultMetadata = {}) {
     try {
       const updateData = {
@@ -537,6 +583,10 @@ class DistributedOrchestrator {
     }
   }
 
+  /**
+   * @param {string} jobId
+   * @param {any} returnvalue
+   */
   async handleJobCompletion(jobId, returnvalue) {
     try {
       // Extract execution ID from return value
@@ -561,6 +611,10 @@ class DistributedOrchestrator {
     }
   }
 
+  /**
+   * @param {string} jobId
+   * @param {any} error
+   */
   async handleJobFailure(jobId, error) {
     try {
       void error; // acknowledged for linter; detailed error handled elsewhere

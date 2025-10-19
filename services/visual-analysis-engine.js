@@ -23,8 +23,7 @@ const sharp = require('sharp');
  * @property {any[]} recommendations
  */
 
-/** @type {Record<string, any>} */
-const interactionMap = {};
+// interactionMap removed - previously unused; keep logic in inferInteractionType
 
 class VisualAnalysisEngine {
   constructor() {
@@ -40,8 +39,8 @@ class VisualAnalysisEngine {
   async analyzeRecordingSession(sessionData) {
     console.log('ðŸ” Starting visual analysis of recording session');
     const { actions, screenshots } = sessionData;
-    
-      const analysis = this.createAnalysisResult();
+
+    const analysis = this.createAnalysisResult();
 
     try {
       // Analyze screenshots with GPT-4V

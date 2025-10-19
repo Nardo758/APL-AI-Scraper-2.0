@@ -11,6 +11,7 @@ This project uses a **hermetic testing strategy** that works both with and witho
 - Stable results — no network flakiness
 
 ### CI / Integration Testing (Real Services)
+
 - Use real Supabase and Redis when credentials are provided
 - End-to-end validation against live infra
 - Recommended for release pipelines and integration verification
@@ -63,6 +64,7 @@ Service stubs and mocks used during local testing:
 - `tests/mocks/redis-mock.js` — redis/ioredis module mocks used in Jest mappings
 
 Automatic behavior:
+
 - Services use the real clients when credentials/environment variables are present. Otherwise they automatically fall back to in-memory or module-level stubs to keep tests hermetic.
 
 

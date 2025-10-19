@@ -777,8 +777,8 @@ class DataProcessor {
   }
 
   isTypeConsistent(actualType, expectedType) {
-  /** @type {Record<string, string[]>} */
-  const typeMapping = {
+    /** @type {Record<string, string[]>} */
+    const typeMapping = {
       'price': ['number'],
       'number': ['number'],
       'text': ['text', 'string'],
