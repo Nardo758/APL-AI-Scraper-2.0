@@ -4,6 +4,20 @@ const IORedis = require('ioredis');
 const { PlaywrightScraper } = require('../scrapers/playwright-scraper');
 const { parseNumber } = require('../utils/parse-number');
 
+/**
+ * @typedef {Object} JobDescriptor
+ * @property {string|number} id
+ * @property {number} [priority]
+ */
+
+/**
+ * @typedef {Object} JobResult
+ * @property {boolean} success
+ * @property {string|number} [jobId]
+ * @property {number} [processingTime]
+ * @property {any} [data]
+ */
+
 class JobQueue {
   constructor(supabase) {
     this.supabase = supabase;
@@ -31,6 +45,10 @@ class JobQueue {
     console.log('ðŸš€ Job Queue initialized');
   }
 
+  /**
+   * @param {string|number} jobId
+   * @param {number} [priority]
+   */
   async addJob(jobId, priority = 0) {
     try {
       await this.scrapingQueue.add(
@@ -49,6 +67,9 @@ class JobQueue {
     }
   }
 
+  /**
+   * @param {JobDescriptor[]} jobs
+   */
   async addBulkJobs(jobs) {
     try {
       const jobData = jobs.map((job, index) => ({
@@ -103,6 +124,10 @@ class JobQueue {
     console.log('ðŸ‘· Worker started with concurrency:', concurrency);
   }
 
+  /**
+   * @param {any} job
+   * @returns {Promise<JobResult>}
+   */
   async processJob(job) {
     const { jobId } = job.data;
     const startTime = Date.now();
@@ -207,6 +232,11 @@ class JobQueue {
     }
   }
 
+  /**
+   * @param {string|number} jobId
+   * @param {string} status
+   * @param {Object} [additionalFields]
+   */
   async updateJobStatus(jobId, status, additionalFields = {}) {
     try {
       const updateData = {
