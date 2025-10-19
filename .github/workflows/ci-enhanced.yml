@@ -1,5 +1,7 @@
 name: Enhanced Test Matrix
 
+# no structural fixes required - runs-on keys are at job level and SARIF/upload steps already use `with:` mappings
+
 on:
   push:
     branches: [ main ]
