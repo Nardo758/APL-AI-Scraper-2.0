@@ -1,5 +1,33 @@
 ﻿const { createClient } = require('@supabase/supabase-js');
 
+/**
+ * @typedef {Object} ProxyRecord
+ * @property {string|number} id
+ * @property {string} host
+ * @property {number} port
+ * @property {string} [username]
+ * @property {string} [password]
+ * @property {string} [type]
+ * @property {string} [country]
+ * @property {string} [provider]
+ * @property {number} [success_rate]
+ * @property {number} [total_requests]
+ * @property {number} [successful_requests]
+ * @property {number} [failed_requests]
+ * @property {number} [response_time_ms]
+ * @property {string} [status]
+ */
+
+/**
+ * @typedef {Object} ProxyConfig
+ * @property {string} server
+ * @property {string} [username]
+ * @property {string} [password]
+ */
+
+/**
+ * ProxyManager - manages proxy list, health checks and selection logic
+ */
 class ProxyManager {
   constructor() {
     try {
@@ -27,6 +55,10 @@ class ProxyManager {
     this.init();
   }
 
+  /**
+   * Initialize the proxy manager: load proxies and start health checks
+   * @returns {Promise<void>}
+   */
   async init() {
     try {
       await this.loadProxies();
@@ -38,6 +70,10 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Load active proxies from the supabase table `proxy_list`.
+   * @returns {Promise<ProxyRecord[]>}
+   */
   async loadProxies() {
     try {
       const { data, error } = await this.supabase
@@ -62,6 +98,11 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Select the next available proxy, skipping failed or excluded countries.
+   * @param {string[]} [excludeCountries]
+   * @returns {ProxyRecord|null}
+   */
   getNextProxy(excludeCountries = []) {
     if (this.proxies.length === 0) {
       console.log('âš ï¸ No proxies available');
@@ -113,6 +154,11 @@ class ProxyManager {
     return null;
   }
 
+  /**
+   * Return the best performing proxy for a given country code.
+   * @param {string} countryCode
+   * @returns {ProxyRecord|null}
+   */
   getProxyByCountry(countryCode) {
     const countryProxies = this.proxies.filter(p => 
       p.country === countryCode && !this.failedProxies.has(p.id)
@@ -129,6 +175,13 @@ class ProxyManager {
     );
   }
 
+  /**
+   * Mark a proxy as failed locally and update remote stats.
+   * @param {string|number} proxyId
+   * @param {string} reason
+   * @param {Object} [errorDetails]
+   * @returns {Promise<void>}
+   */
   async markProxyFailed(proxyId, reason, errorDetails = {}) {
     try {
       this.failedProxies.add(proxyId);
@@ -146,6 +199,12 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Mark a proxy as successful and update remote stats.
+   * @param {string|number} proxyId
+   * @param {number} [responseTimeMs]
+   * @returns {Promise<void>}
+   */
   async markProxySuccess(proxyId, responseTimeMs = 0) {
     try {
       // Remove from failed list if present
@@ -158,6 +217,13 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Update proxy reliability stats in the backend table.
+   * @param {string|number} proxyId
+   * @param {boolean} success
+   * @param {Object} [metadata]
+   * @returns {Promise<void>}
+   */
   async updateProxyReliability(proxyId, success, metadata = {}) {
     try {
       const { data: proxy, error: fetchError } = await this.supabase
@@ -210,6 +276,10 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Start periodic health checks for proxies.
+   * @returns {void}
+   */
   setupHealthChecks() {
     // Clear existing interval if any
     if (this.healthCheckInterval) {
@@ -233,6 +303,11 @@ class ProxyManager {
     console.log('ðŸ¥ Proxy health monitoring started');
   }
 
+  /**
+   * Perform an on-demand health check for a specific proxy id.
+   * @param {string|number} proxyId
+   * @returns {Promise<void>}
+   */
   async checkProxyHealth(proxyId) {
     const proxy = this.proxies.find(p => p.id === proxyId);
     if (!proxy) return;
@@ -278,6 +353,11 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Create a runtime proxy configuration object for HTTP clients.
+   * @param {ProxyRecord|null} proxy
+   * @returns {ProxyConfig|null}
+   */
   getProxyConfig(proxy) {
     if (!proxy) return null;
 
@@ -293,6 +373,11 @@ class ProxyManager {
     return config;
   }
 
+  /**
+   * Create a Playwright-friendly proxy config.
+   * @param {ProxyRecord|null} proxy
+   * @returns {ProxyConfig|null}
+   */
   getPlaywrightProxyConfig(proxy) {
     if (!proxy) return null;
 
@@ -308,6 +393,11 @@ class ProxyManager {
     return config;
   }
 
+  /**
+   * Add a new proxy to the backend and local cache.
+   * @param {Partial<ProxyRecord>} proxyData
+   * @returns {Promise<ProxyRecord>}
+   */
   async addProxy(proxyData) {
     try {
       const { data, error } = await this.supabase
@@ -338,6 +428,11 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Remove a proxy from backend and local cache.
+   * @param {string|number} proxyId
+   * @returns {Promise<void>}
+   */
   async removeProxy(proxyId) {
     try {
       const { error } = await this.supabase
@@ -358,6 +453,10 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Aggregate proxy statistics from backend rows.
+   * @returns {Promise<any>} stats
+   */
   async getProxyStats() {
     try {
       const { data, error } = await this.supabase
@@ -401,16 +500,28 @@ class ProxyManager {
     }
   }
 
+  /**
+   * Reload the proxy list from backend.
+   * @returns {Promise<number>} number of proxies loaded
+   */
   async refreshProxyList() {
     console.log('ðŸ”„ Refreshing proxy list...');
     await this.loadProxies();
     return this.proxies.length;
   }
 
+  /**
+   * Number of available proxies (excluding failed ones).
+   * @returns {number}
+   */
   getAvailableProxyCount() {
     return this.proxies.length - this.failedProxies.size;
   }
 
+  /**
+   * Cleanup any running intervals or resources.
+   * @returns {void}
+   */
   cleanup() {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
