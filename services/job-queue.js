@@ -2,6 +2,7 @@
 const { Queue, Worker } = require('bullmq');
 const IORedis = require('ioredis');
 const { PlaywrightScraper } = require('../scrapers/playwright-scraper');
+const { parseNumber } = require('../utils/parse-number');
 
 class JobQueue {
   constructor(supabase) {
@@ -76,7 +77,7 @@ class JobQueue {
       },
       {
         connection: this.connection,
-        concurrency: parseInt(process.env.WORKER_CONCURRENCY) || 3,
+        concurrency: parseNumber(process.env.WORKER_CONCURRENCY, 3) || 3,
         limiter: {
           max: 10,
           duration: 60000 // 10 requests per minute
@@ -98,7 +99,7 @@ class JobQueue {
       console.error('ðŸ”¥ Worker error:', err);
     });
 
-    const concurrency = (this.worker?.opts?.concurrency ?? parseInt(process.env.WORKER_CONCURRENCY)) || 3;
+    const concurrency = (this.worker?.opts?.concurrency ?? parseNumber(process.env.WORKER_CONCURRENCY, 3)) || 3;
     console.log('ðŸ‘· Worker started with concurrency:', concurrency);
   }
 

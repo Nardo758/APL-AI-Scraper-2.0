@@ -3,6 +3,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { parseNumber } = require('../../utils/parse-number');
 
 class ApiGateway {
   constructor() {
@@ -412,7 +413,7 @@ class ApiGateway {
         .select('id, status, url, template_id, created_at, completed_at, records_scraped, error_message')
         .eq('api_key_id', req.apiKey.id)
         .order('created_at', { ascending: false })
-        .range(offset, offset + parseInt(limit) - 1);
+        .range(parseNumber(offset, 0) || 0, (parseNumber(offset, 0) || 0) + ((parseNumber(limit, 50) || 50) - 1));
 
       if (status) query = query.eq('status', status);
       if (template_id) query = query.eq('template_id', template_id);
@@ -426,8 +427,8 @@ class ApiGateway {
       res.json({
         jobs: jobs || [],
         pagination: {
-          limit: parseInt(limit),
-          offset: parseInt(offset),
+          limit: parseNumber(limit, 50) || 50,
+          offset: parseNumber(offset, 0) || 0,
           total: count
         }
       });
@@ -453,7 +454,7 @@ class ApiGateway {
       } = req.query;
 
       const maxLimit = req.user.subscription_tier === 'premium' ? 1000 : 100;
-      const actualLimit = Math.min(parseInt(limit), maxLimit);
+      const actualLimit = Math.min(parseNumber(limit, 100) || 100, maxLimit);
 
       let query = this.supabase
         .from('scraped_data')
@@ -467,7 +468,7 @@ class ApiGateway {
           )
         `)
         .eq('scraping_jobs.api_key_id', req.apiKey.id)
-        .range(offset, offset + actualLimit - 1);
+        .range(parseNumber(offset, 0) || 0, (parseNumber(offset, 0) || 0) + actualLimit - 1);
 
       if (template_id) {
         query = query.eq('scraping_jobs.template_id', template_id);
@@ -516,7 +517,7 @@ class ApiGateway {
         data: transformedData,
         pagination: {
           limit: actualLimit,
-          offset: parseInt(offset),
+          offset: parseNumber(offset, 0) || 0,
           total: count
         },
         meta: {

@@ -39,14 +39,18 @@ function fakeQuery(table) {
     _single: false,
     select(fields) { this._action = 'select'; this._fields = fields; return this; },
     insert(items) { this._action = 'insert'; const toInsert = Array.isArray(items) ? items : [items]; rows.push(...toInsert); this._payload = toInsert; return this; },
+    upsert(items) { this._action = 'upsert'; const toUpsert = Array.isArray(items) ? items : [items]; if (!rows.length) { rows.push(...toUpsert); } else { rows[0] = toUpsert[0]; } this._payload = toUpsert; return this; },
     update(u) { this._action = 'update'; if (rows[0]) Object.assign(rows[0], u); this._payload = u; return this; },
     delete() { this._action = 'delete'; return this; },
     eq() { return this; },
+    neq() { return this; },
     order() { return this; },
+    limit() { return this; },
     single() { this._single = true; return this; },
     async then(resolve) {
       // resolve like supabase responses: { data, error }
       if (this._action === 'insert') return resolve({ data: this._payload, error: null });
+      if (this._action === 'upsert') return resolve({ data: this._payload, error: null });
       if (this._single) return resolve({ data: rows[0] || null, error: null });
       return resolve({ data: rows, error: null });
     },

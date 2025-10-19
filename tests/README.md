@@ -5,6 +5,7 @@
 This project uses a **hermetic testing strategy** that works both with and without external services.
 
 ### Local Development (Stubbed)
+
 - No external credentials required — runs on any platform
 - Fast execution — uses in-memory and module-level stubs/mocks
 - Stable results — no network flakiness
@@ -67,7 +68,7 @@ Automatic behavior:
 
 ## 🧭 Test Structure
 
-```
+```text
 tests/
 ├── unit/           # Fast, isolated tests
 ├── integration/    # Integration tests (stubbed by default, can be run with real services)

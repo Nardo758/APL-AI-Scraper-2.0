@@ -1,5 +1,6 @@
 ﻿// AI-Powered Site Change Detection System
 const { AIService } = require('../ai-service');
+const { parseNumber } = require('../../utils/parse-number');
 const crypto = require('crypto');
 void crypto; // crypto imported for future use; acknowledge to satisfy linter
 
@@ -467,7 +468,7 @@ class SiteChangeDetector {
     if (!currentVersion) return '1.0.0';
     
     const parts = currentVersion.split('.');
-    const patch = parseInt(parts[2] || 0) + 1;
+    const patch = (parseNumber(parts[2] || 0, 0) || 0) + 1;
     return `${parts[0] || 1}.${parts[1] || 0}.${patch}`;
   }
 
