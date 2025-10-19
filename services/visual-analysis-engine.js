@@ -2,6 +2,30 @@
 const { AIService } = require('./ai-service');
 const sharp = require('sharp');
 
+/**
+ * @typedef {Object} SessionData
+ * @property {any[]} actions
+ * @property {any[]} screenshots
+ * @property {Object} metadata
+ */
+
+/**
+ * @typedef {Object} AnalysisResult
+ * @property {any[]} identifiedElements
+ * @property {any[]} interactiveElements
+ * @property {any[]} dataFields
+ * @property {any[]} actionPatterns
+ * @property {any[]} patterns
+ * @property {any[]} navigationFlow
+ * @property {Object} pageStructure
+ * @property {number} confidence
+ * @property {string} generatedCode
+ * @property {any[]} recommendations
+ */
+
+/** @type {Record<string, any>} */
+const interactionMap = {};
+
 class VisualAnalysisEngine {
   constructor() {
     this.aiService = new AIService();
@@ -9,20 +33,15 @@ class VisualAnalysisEngine {
     this.confidenceThreshold = 0.7;
   }
 
+  /**
+   * @param {SessionData} sessionData
+   * @returns {Promise<AnalysisResult>}
+   */
   async analyzeRecordingSession(sessionData) {
     console.log('ðŸ” Starting visual analysis of recording session');
     const { actions, screenshots } = sessionData;
     
-    const analysis = {
-      identifiedElements: [],
-      dataFields: [],
-      actionPatterns: [],
-      navigationFlow: [],
-      pageStructure: {},
-      confidence: 0,
-      generatedCode: '',
-      recommendations: []
-    };
+      const analysis = this.createAnalysisResult();
 
     try {
       // Analyze screenshots with GPT-4V
@@ -72,6 +91,24 @@ class VisualAnalysisEngine {
       console.error('âŒ Visual analysis failed:', error);
       throw new Error(`Visual analysis failed: ${error.message}`);
     }
+  }
+
+  /**
+   * @returns {AnalysisResult}
+   */
+  createAnalysisResult() {
+    return {
+      identifiedElements: [],
+      interactiveElements: [],
+      dataFields: [],
+      actionPatterns: [],
+      patterns: [],
+      navigationFlow: [],
+      pageStructure: {},
+      confidence: 0,
+      generatedCode: '',
+      recommendations: []
+    };
   }
 
   async analyzeScreenshot(screenshot, index) {

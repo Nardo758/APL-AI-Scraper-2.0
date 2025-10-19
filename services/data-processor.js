@@ -1,5 +1,30 @@
 ﻿const { createClient } = require('@supabase/supabase-js');
 
+/**
+ * @typedef {Object} GeocodeOptions
+ * @property {string} [provider]
+ * @property {number} [timeout]
+ * @property {boolean} [useCache]
+ */
+/**
+ * @typedef {Object} TransformConfig
+ * @property {string} type
+ * @property {Object} [params]
+ * @property {any} [options]
+ * @property {number} [factor]
+ * @property {string} [prefix]
+ * @property {string} [suffix]
+ * @property {boolean} [required]
+ */
+/**
+ * @typedef {Object} FieldConfig
+ * @property {string} name
+ * @property {string} [type]
+ * @property {TransformConfig[]} [transforms]
+ */
+
+// normalizationCache intentionally omitted; keep file free of unused bindings
+
 class DataProcessor {
   constructor() {
     try {
@@ -544,6 +569,12 @@ class DataProcessor {
   }
 
   // Transform functions
+  /**
+   * @param {any} value
+   * @param {TransformConfig} transform
+   * @param {FieldConfig} fieldConfig
+   * @returns {Promise<any>}
+   */
   async applyTransform(value, transform, fieldConfig) {
     if (!transform || !transform.type) return value;
     void fieldConfig; // acknowledged for linter
@@ -572,6 +603,10 @@ class DataProcessor {
     }
   }
 
+  /**
+   * @param {string} address
+   * @param {GeocodeOptions} [options]
+   */
   async geocodeAddress(address, options = {}) {
     if (!address || typeof address !== 'string') return null;
     
@@ -742,7 +777,8 @@ class DataProcessor {
   }
 
   isTypeConsistent(actualType, expectedType) {
-    const typeMapping = {
+  /** @type {Record<string, string[]>} */
+  const typeMapping = {
       'price': ['number'],
       'number': ['number'],
       'text': ['text', 'string'],

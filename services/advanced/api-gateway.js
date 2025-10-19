@@ -5,6 +5,29 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { parseNumber } = require('../../utils/parse-number');
 
+/**
+ * @typedef {Object} ScrapeRequestBody
+ * @property {string} template_id
+ * @property {string[]} urls
+ * @property {Object} [options]
+ */
+
+/**
+ * @typedef {Object} UsageLimits
+ * @property {boolean} allowed
+ * @property {Object} limits
+ * @property {number} current_usage
+ */
+
+/**
+ * @typedef {import('express').Request} BaseRequest
+ * @typedef {import('express').Response} Response
+ */
+
+/**
+ * @typedef {BaseRequest & { apiKey?: any, user?: any, requestId?: string, body?: any }} Request
+ */
+
 class ApiGateway {
   constructor() {
     this.router = express.Router();
@@ -71,6 +94,11 @@ class ApiGateway {
     this.router.use(this.validateRequest.bind(this));
   }
 
+  /**
+   * @param {Request} req
+   * @param {Response} res
+   * @param {Function} next
+   */
   async authenticate(req, res, next) {
     // Skip auth for health check
     if (req.path === '/health') {
@@ -142,6 +170,11 @@ class ApiGateway {
     }
   }
 
+  /**
+   * @param {Request} req
+   * @param {Response} res
+   * @param {Function} next
+   */
   logRequest(req, res, next) {
     const startTime = Date.now();
     
@@ -255,6 +288,10 @@ class ApiGateway {
     });
   }
 
+  /**
+   * @param {Request & { body: ScrapeRequestBody, apiKey?: any, user?: any }} req
+   * @param {Response} res
+   */
   async handleScrapeRequest(req, res) {
     try {
       const { template_id, urls, options = {} } = req.body;
