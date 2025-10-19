@@ -3,8 +3,9 @@
 ## Quick Start for Windows
 
 ### Prerequisites
-- **Node.js** 18+ (https://nodejs.org/) 
-- **Git** (https://git-scm.com/) 
+
+- **Node.js** 18+ (https://nodejs.org/)
+- **Git** (https://git-scm.com/)
 - **Git Bash** or **WSL** (recommended for running bash scripts like `local-ci.sh`)
 - **Docker Desktop** (optional, for Redis integration tests)
 - **PowerShell 5.1+** (built into Windows)
@@ -18,16 +19,20 @@ Open a PowerShell terminal in the repository root and run:
 ```powershell
 # Run stubbed tests (no external dependencies)
 # Recommended: run the Windows helper script in the scripts/ folder
-.\scripts\local-ci-windows.ps1
+.
+\scripts\local-ci-windows.ps1
 
 # Run integration tests (requires Redis)
-.\scripts\local-ci-windows.ps1 integration
+.
+\scripts\local-ci-windows.ps1 integration
 
 # Run all tests
-.\scripts\local-ci-windows.ps1 all
+.
+\scripts\local-ci-windows.ps1 all
 
 # Show report summary only
-.\scripts\local-ci-windows.ps1 report
+.
+\scripts\local-ci-windows.ps1 report
 
 # Alternatively you can run via npm (convenience)
 npm run local-ci:windows
@@ -84,7 +89,8 @@ docker stop local-redis; docker rm local-redis
 Then run the integration mode:
 
 ```powershell
-.\local-ci.ps1 integration
+.
+\local-ci.ps1 integration
 ```
 
 ## Troubleshooting

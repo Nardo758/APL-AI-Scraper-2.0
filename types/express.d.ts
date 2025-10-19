@@ -12,10 +12,10 @@ declare global {
     }
 
     interface Request {
-      services?: {
+      services: {
         [key: string]: any;
       };
-      user?: User;
+      user: User;
     }
   }
 }

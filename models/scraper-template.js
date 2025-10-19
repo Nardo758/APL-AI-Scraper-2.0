@@ -1,4 +1,5 @@
 ﻿const { createClient } = require('@supabase/supabase-js');
+const { parseNumber } = require('../utils/parse-number');
 
 class ScraperTemplate {
   constructor(supabase) {
@@ -106,7 +107,7 @@ class ScraperTemplate {
 
   incrementVersion(version) {
     const parts = version.split('.');
-    const patch = parseInt(parts[2]) + 1;
+    const patch = (parseNumber(parts[2], 0) || 0) + 1;
     return `${parts[0]}.${parts[1]}.${patch}`;
   }
 
@@ -120,7 +121,7 @@ class ScraperTemplate {
         .single();
 
       const parts = current.version.split('.');
-      const minor = parseInt(parts[1]) + 1;
+      const minor = (parseNumber(parts[1], 0) || 0) + 1;
       const newVersion = `${parts[0]}.${minor}.0`;
 
       await this.supabase

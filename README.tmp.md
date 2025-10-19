@@ -1,4 +1,6 @@
 # APL AI Scraper 2.0
+````markdown
+# APL AI Scraper 2.0
 
 APL AI Scraper 2.0 is a visual web scraping platform that combines
 vision-capable models, assistant models, and Playwright automation to
@@ -18,50 +20,50 @@ provide intelligent scraping workflows.
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/Nardo758/APL-AI-Scraper-2.0.git
-   cd APL-AI-Scraper-2.0
-   ```
+```bash
+git clone https://github.com/Nardo758/APL-AI-Scraper-2.0.git
+cd APL-AI-Scraper-2.0
+```
 
 2. Install dependencies:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
 3. Configure environment:
 
-   ```bash
-   cp .env.example .env
-   # Edit .env with your API keys and configuration
-   ```
+```bash
+cp .env.example .env
+# Edit .env with your API keys and configuration
+```
 
 4. Set up the database:
 
-   Copy the SQL from `migrations/001_initial_schema.sql` into your
-   Supabase SQL editor and run it, or use your migration workflow.
+Copy the SQL from `migrations/001_initial_schema.sql` into your
+Supabase SQL editor and run it, or use your migration workflow.
 
 5. Start Redis (local):
 
-   ```bash
-   redis-server
-   ```
+```bash
+redis-server
+```
 
-   or with Docker:
+or with Docker:
 
-   ```bash
-   docker run -d -p 6379:6379 redis:alpine
-   ```
+```bash
+docker run -d -p 6379:6379 redis:alpine
+```
 
 6. Start the application:
 
-   ```bash
-   # Development
-   npm run dev
+```bash
+# Development
+npm run dev
 
-   # Production
-   npm start
-   ```
+# Production
+npm start
+```
 
 ## Features
 
@@ -95,19 +97,19 @@ provide intelligent scraping workflows.
 ```javascript
 // Create a new scraping job
 const job = await fetch('/api/jobs', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    project_id: 'your-project-id',
-    url: 'https://example.com',
-    config: {
-      extractors: [
-        { name: 'title', selector: 'h1', type: 'text' },
-        { name: 'products', selector: '.product-item', type: 'text', multiple: true }
-      ],
-      actions: [ { type: 'click', selector: '.load-more-btn', delay: 1000 } ]
-    }
-  })
+   method: 'POST',
+   headers: { 'Content-Type': 'application/json' },
+   body: JSON.stringify({
+      project_id: 'your-project-id',
+      url: 'https://example.com',
+      config: {
+         extractors: [
+            { name: 'title', selector: 'h1', type: 'text' },
+            { name: 'products', selector: '.product-item', type: 'text', multiple: true }
+         ],
+         actions: [ { type: 'click', selector: '.load-more-btn', delay: 1000 } ]
+      }
+   })
 });
 ```
 
@@ -180,3 +182,5 @@ details.
 - Discussions: [project discussions](https://github.com/Nardo758/APL-AI-Scraper-2.0/discussions)
 
 Built with ❤️ by the APL Team
+
+````

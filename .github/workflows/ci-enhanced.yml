@@ -25,71 +25,71 @@ jobs:
         node-version: [18.x, 20.x]
 
     steps:
-    - uses: "actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955"
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci --no-audit --no-fund
-      
-    - name: Run linting
-      run: npx eslint . --ext .js --max-warnings 0 --format checkstyle -o ./test-results/eslint/results.xml
-      continue-on-error: true
-      
-    - name: Run unit tests with JUnit output
-      run: |
-        npx jest tests/unit/ --ci --reporters=default --reporters=jest-junit --coverage
-      env:
-        JEST_JUNIT_OUTPUT_DIR: ./test-results/junit
-        JEST_JUNIT_OUTPUT_NAME: unit-test-results.xml
-        NODE_ENV: test
-        CI: true
-        REDIS_URL: ''
-        SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
-        SUPABASE_ANON_KEY: "${{ secrets.SUPABASE_ANON_KEY }}"
-        
-    - name: Run integration tests with JUnit output
-      run: |
-        npx jest tests/integration/ --ci --reporters=default --reporters=jest-junit
-      env:
-        JEST_JUNIT_OUTPUT_DIR: ./test-results/junit  
-        JEST_JUNIT_OUTPUT_NAME: integration-test-results.xml
-        NODE_ENV: test
-        CI: true
-        REDIS_URL: "${{ secrets.REDIS_URL }}"
-        SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
-        SUPABASE_ANON_KEY: "${{ secrets.SUPABASE_ANON_KEY }}"
-        
-    - name: Upload test results
-      uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
-      with:
-        name: test-results-${{ matrix.os }}-node${{ matrix.node-version }}
-        path: |
-          coverage/
-          test-results/
-        retention-days: 30
-        
-    - name: Publish Unit Test Results
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: Jest Tests - ${{ matrix.os }} - Node ${{ matrix.node-version }}
-        path: test-results/junit/*.xml
-        reporter: jest-junit
-        fail-on-error: false
+      - uses: actions/checkout@v4
 
-    - name: Publish ESLint Results
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: ESLint - ${{ matrix.os }} - Node ${{ matrix.node-version }}
-        path: test-results/eslint/*.xml
-        reporter: checkstyle
-        fail-on-error: false
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+    
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run linting
+        run: npx eslint . --ext .js --max-warnings 0 --format checkstyle -o ./test-results/eslint/results.xml
+        continue-on-error: true
+
+      - name: Run unit tests with JUnit output
+        run: |
+          npx jest tests/unit/ --ci --reporters=default --reporters=jest-junit --coverage
+        env:
+          JEST_JUNIT_OUTPUT_DIR: ./test-results/junit
+          JEST_JUNIT_OUTPUT_NAME: unit-test-results.xml
+          NODE_ENV: test
+          CI: true
+          REDIS_URL: ''
+          SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
+          SUPABASE_ANON_KEY: "${{ secrets.SUPABASE_ANON_KEY }}"
+
+      - name: Run integration tests with JUnit output
+        run: |
+          npx jest tests/integration/ --ci --reporters=default --reporters=jest-junit
+        env:
+          JEST_JUNIT_OUTPUT_DIR: ./test-results/junit
+          JEST_JUNIT_OUTPUT_NAME: integration-test-results.xml
+          NODE_ENV: test
+          CI: true
+          REDIS_URL: "${{ secrets.REDIS_URL }}"
+          SUPABASE_URL: "${{ secrets.SUPABASE_URL }}"
+          SUPABASE_ANON_KEY: "${{ secrets.SUPABASE_ANON_KEY }}"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-node${{ matrix.node-version }}
+          path: |
+            coverage/
+            test-results/
+          retention-days: 30
+
+      - name: Publish Unit Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Jest Tests - ${{ matrix.os }} - Node ${{ matrix.node-version }}
+          path: test-results/junit/*.xml
+          reporter: jest-junit
+          fail-on-error: false
+
+      - name: Publish ESLint Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: ESLint - ${{ matrix.os }} - Node ${{ matrix.node-version }}
+          path: test-results/eslint/*.xml
+          reporter: checkstyle
+          fail-on-error: false
 
   test-integration:
     name: Integration Tests (Real Services)
@@ -108,144 +108,139 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
     
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'npm'
-    
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev python3 redis-tools
-        
-    - name: Install project dependencies
-      run: npm ci --no-audit --no-fund
-        
-    - name: Wait for Redis
-      run: |
-        until redis-cli -h localhost -p 6379 ping | grep -q PONG; do
-          echo "Waiting for Redis..."
-          sleep 2
-        done
-        echo "Redis is ready!"
-        
-    - name: Run full test suite with coverage
-      env:
-        NODE_ENV: test
-        REDIS_URL: redis://localhost:6379
-        JEST_JUNIT_OUTPUT_DIR: ./test-results/junit
-        JEST_JUNIT_OUTPUT_NAME: full-test-results.xml
-        CI: true
-      run: |
-        npx jest --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text --coverageReporters=html
-        
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage/lcov.info
-        flags: integration
-        name: codecov-integration
-        fail_ci_if_error: false
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
 
-    - name: Publish Test Results
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: Integration Tests
-        path: test-results/junit/*.xml
-        reporter: jest-junit
-        fail-on-error: false
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev python3 redis-tools
+
+      - name: Install project dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Wait for Redis
+        run: |
+          until redis-cli -h localhost -p 6379 ping | grep -q PONG; do
+            echo "Waiting for Redis..."
+            sleep 2
+          done
+          echo "Redis is ready!"
+
+      - name: Run full test suite with coverage
+        env:
+          NODE_ENV: test
+          REDIS_URL: redis://localhost:6379
+          JEST_JUNIT_OUTPUT_DIR: ./test-results/junit
+          JEST_JUNIT_OUTPUT_NAME: full-test-results.xml
+          CI: true
+        run: |
+          npx jest --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=lcov --coverageReporters=text --coverageReporters=html
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: integration
+          name: codecov-integration
+          fail_ci_if_error: false
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Integration Tests
+          path: test-results/junit/*.xml
+          reporter: jest-junit
+          fail-on-error: false
 
   code-quality:
     name: Code Quality Analysis
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci --no-audit --no-fund
-      
-    - name: Run SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v1.10
-      # Note: SONAR_TOKEN and GITHUB_TOKEN are provided via GitHub Actions
-      # secrets/context. These are injected at runtime by GitHub Actions and
-      # may be flagged as missing by local editors. Quoting the expressions
-      # reduces editor warnings and preserves the runtime behavior.
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
-      with:
-        args: >
-          -Dsonar.projectKey=your-org_APL-AI-Scraper-2.0
-          -Dsonar.organization=your-org
-          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-          -Dsonar.coverage.exclusions=tests/**,**/*.test.js
-          -Dsonar.tests=tests
-          -Dsonar.test.inclusions=tests/**/*.test.js
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2.0
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
+        with:
+          args: >
+            -Dsonar.projectKey=your-org_APL-AI-Scraper-2.0
+            -Dsonar.organization=your-org
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.coverage.exclusions=tests/**,**/*.test.js
+            -Dsonar.tests=tests
+            -Dsonar.test.inclusions=tests/**/*.test.js
 
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'npm'
-    
-    - name: Run security audit
-      run: npm audit --audit-level moderate --json > npm-audit.json || true
-      
-    - name: Upload npm audit results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: npm-audit-results
-        path: npm-audit.json
-        retention-days: 30
-        
-    - name: Run Snyk security scan
-      uses: snyk/actions/node@v3
-      # Note: SNYK_TOKEN is provided via GitHub Actions secrets/context. Quoted
-      # expressions help editors understand these are runtime-injected values.
-      env:
-        SNYK_TOKEN: "${{ secrets.SNYK_TOKEN }}"
-      with:
-        args: --severity-threshold=high --sarif-file-output=snyk.sarif
-        
-    - name: Upload SARIF results
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: snyk.sarif
+      - uses: actions/checkout@v4
 
-    - name: Run OWASP Dependency Check
-      uses: dependency-check/Dependency-Check_Action@main
-      with:
-        project: 'APL-AI-Scraper-2.0'
-        path: '.'
-        format: 'SARIF'
-        out: 'reports'
-        
-    - name: Upload Dependency Check Results
-      uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
-      if: always()
-      with:
-        name: dependency-check-results
-        path: reports/
-        retention-days: 30
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Run security audit
+        run: npm audit --audit-level moderate --json > npm-audit.json || true
+
+      - name: Upload npm audit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: npm-audit-results
+          path: npm-audit.json
+          retention-days: 30
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@v1
+        env:
+          SNYK_TOKEN: "${{ secrets.SNYK_TOKEN }}"
+        with:
+          args: --severity-threshold=high --sarif-file-output=snyk.sarif
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: snyk.sarif
+
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'APL-AI-Scraper-2.0'
+          path: '.'
+          format: 'SARIF'
+          out: 'reports'
+
+      - name: Upload Dependency Check Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-results
+          path: reports/
+          retention-days: 30
+
+# End of workflow - file intentionally references secrets and runtime expressions.
+# GitHub Actions evaluates them at runtime; local editors may flag them.

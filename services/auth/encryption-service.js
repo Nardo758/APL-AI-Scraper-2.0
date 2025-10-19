@@ -199,7 +199,16 @@ class EncryptionService {
 
   setupKeyRotation() {
     this.checkKeyRotation();
-    setInterval(() => this.checkKeyRotation(), 24 * 60 * 60 * 1000);
+    // store interval handle so tests can avoid leaking
+    try {
+      this._rotationTimer = setInterval(() => this.checkKeyRotation(), 24 * 60 * 60 * 1000);
+      if (this._rotationTimer && typeof this._rotationTimer.unref === 'function') {
+        // allow node to exit if only this timer remains
+        this._rotationTimer.unref();
+      }
+    } catch (e) {
+      // defensive: if setInterval behaves differently in some runtimes, ignore
+    }
   }
 
   async checkKeyRotation() {

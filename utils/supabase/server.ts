@@ -44,7 +44,7 @@ export default createClientFromRequest
 
 // Convenience helper for Next.js Server Components that call `cookies()`
 // Usage: const supabase = createClient(cookieStore)
-export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
+export const createClient = (cookieStore: any) => {
   // Prefer the publishable default key if provided (matches your snippet); fall back to anon key
   const keyToUse = supabasePublishableKey || supabaseKey
 
@@ -54,11 +54,14 @@ export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll()
+          // cookieStore can be a Promise/ReadonlyRequestCookies in some runtimes;
+          // use a conservative any-cast so the helper works in both Server
+          // Components and edge/runtime contexts without changing behavior.
+          return /** @type {any} */ (cookieStore).getAll()
         },
         setAll(cookiesToSet: Array<{ name: string; value: string; options?: CookieOptions }>) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options as CookieOptions))
+            cookiesToSet.forEach(({ name, value, options }) => /** @type {any} */ (cookieStore).set(name, value, options as CookieOptions))
           } catch {
             // The `setAll` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing

@@ -23,6 +23,7 @@ try {
 }
 const logger = require('../core/logger');
 const { supabase } = require('../core/supabase');
+const { parseNumber } = require('../utils/parse-number');
 
 class ComplianceManager {
   constructor() {
@@ -145,7 +146,7 @@ class ComplianceManager {
       const key = `crawl_delay:${domain}`;
       const last = await this.redis.get(key);
       if (last) {
-        const since = Date.now() - parseInt(last, 10);
+        const since = Date.now() - (parseNumber(last, 0) || 0);
         const needed = crawlDelay * 1000 - since;
         if (needed > 0) await new Promise(r => setTimeout(r, needed));
       }

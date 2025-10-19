@@ -117,6 +117,24 @@ declare module 'node-fetch' {
   export default fetch;
 }
 
+declare module 'uuid' {
+  export const v4: any;
+  export const v1: any;
+  const uuid: any;
+  export default uuid;
+}
+
+declare module 'jsonwebtoken' {
+  export function sign(...args: any[]): any;
+  export function verify(...args: any[]): any;
+  export function decode(...args: any[]): any;
+  const jwt: any;
+  export default jwt;
+}
+
+// Minimal alias to quiet Express/qs related ParsedQs references in JS files
+type ParsedQs = any;
+
 declare module 'undici' {
   const undici: any;
   export = undici;

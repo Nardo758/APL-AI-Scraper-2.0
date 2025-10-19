@@ -91,7 +91,12 @@ class CredentialManager {
   }
 
   setupCredentialRotation() {
-    setInterval(async () => { await this.checkCredentialExpiry(); }, 24 * 60 * 60 * 1000);
+    try {
+      this._credTimer = setInterval(async () => { await this.checkCredentialExpiry(); }, 24 * 60 * 60 * 1000);
+      if (this._credTimer && typeof this._credTimer.unref === 'function') this._credTimer.unref();
+    } catch (e) {
+      // ignore
+    }
   }
 
   async checkCredentialExpiry() {
