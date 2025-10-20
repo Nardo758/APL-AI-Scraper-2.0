@@ -1,14 +1,15 @@
 // scripts/simple-db-verify.js
+require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 
 (async function main(){
   console.log('🔍 Simple Database Verification');
   console.log('==============================');
 
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
     console.log('❌ Missing environment variables');
     console.log('   SUPABASE_URL:', process.env.SUPABASE_URL ? 'Set' : 'Not set');
-    console.log('   SUPABASE_ANON_KEY:', process.env.SUPABASE_ANON_KEY ? 'Set' : 'Not set');
+    console.log('   SUPABASE_SERVICE_KEY:', process.env.SUPABASE_SERVICE_KEY ? 'Set' : 'Not set');
     process.exit(1);
   }
 
@@ -17,7 +18,7 @@ const { createClient } = require('@supabase/supabase-js');
   try {
     const supabase = createClient(
       process.env.SUPABASE_URL,
-      process.env.SUPABASE_ANON_KEY
+      process.env.SUPABASE_SERVICE_KEY
     );
 
     console.log('Testing connection...');

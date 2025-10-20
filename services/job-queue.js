@@ -3,6 +3,7 @@ const { Queue, Worker } = require('bullmq');
 const IORedis = require('ioredis');
 const { PlaywrightScraper } = require('../scrapers/playwright-scraper');
 const { parseNumber } = require('../utils/parse-number');
+const { DatabaseAdapter } = require('./core/database-adapter');
 
 /**
  * @typedef {Object} JobDescriptor
@@ -21,6 +22,7 @@ const { parseNumber } = require('../utils/parse-number');
 class JobQueue {
   constructor(supabase) {
     this.supabase = supabase;
+    this.dbAdapter = new DatabaseAdapter(supabase);
     this.connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {
       maxRetriesPerRequest: 3,
       retryDelayOnFailover: 100,
@@ -143,16 +145,8 @@ class JobQueue {
     let scraper = null;
 
     try {
-      // Get job details from database
-      const { data: jobData, error } = await this.supabase
-        .from('scraping_jobs')
-        .select('*')
-        .eq('id', jobId)
-        .single();
-
-      if (error) {
-        throw new Error(`Failed to fetch job data: ${error.message}`);
-      }
+      // Get job details from database using adapter
+      const jobData = await this.dbAdapter.getScrapingJob(jobId);
 
       console.log(`ðŸ“Š Job details: ${jobData.url}`);
 
@@ -239,20 +233,10 @@ class JobQueue {
    */
   async updateJobStatus(jobId, status, additionalFields = {}) {
     try {
-      const updateData = {
+      await this.dbAdapter.updateScrapingJob(jobId, {
         status,
         ...additionalFields
-      };
-
-      const { error } = await this.supabase
-        .from('scraping_jobs')
-        .update(updateData)
-        .eq('id', jobId);
-
-      if (error) {
-        console.error(`Failed to update job ${jobId} status:`, error);
-        throw error;
-      }
+      });
     } catch (error) {
       console.error(`Database update failed for job ${jobId}:`, error);
       // Don't throw here as it would cause the job to fail unnecessarily
