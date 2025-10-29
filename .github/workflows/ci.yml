@@ -58,6 +58,16 @@ jobs:
           fi
 
       - name: Run unit tests (with coverage)
+        env:
+          NODE_ENV: test
+          CI: true
+          # Test environment variables (use placeholder values for CI)
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || 'test-key-placeholder' }}
+          MASTER_ENCRYPTION_KEY: ${{ secrets.MASTER_ENCRYPTION_KEY || 'test-encryption-key-placeholder' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://test.supabase.co' }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'test-anon-key' }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY || 'test-service-key' }}
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY || 'test-encryption-key-32-chars-long' }}
         run: npm test -- --coverage
 
       - name: Upload coverage reports to Codecov (only if generated)
