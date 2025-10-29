@@ -60,9 +60,9 @@ class ComplianceLogger {
   anonymizePath(path) {
     // Remove or hash sensitive parameters
     return path.replace(/\/users\/[^/]+/g, '/users/[USER_ID]')
-               .replace(/\/api\/keys\/[^/]+/g, '/api/keys/[KEY_ID]')
-               .replace(/email=[^&]*/g, 'email=[EMAIL]')
-               .replace(/password=[^&]*/g, 'password=[REDACTED]');
+      .replace(/\/api\/keys\/[^/]+/g, '/api/keys/[KEY_ID]')
+      .replace(/email=[^&]*/g, 'email=[EMAIL]')
+      .replace(/password=[^&]*/g, 'password=[REDACTED]');
   }
 
   // Anonymize IP addresses (GDPR requirement)
@@ -239,9 +239,7 @@ function compliancePolicy(req, res, next) {
     }
   }
   return next();
-}
-
-module.exports = {
+}module.exports = {
   requestLogger,
   compliancePolicy,
   logConsent,

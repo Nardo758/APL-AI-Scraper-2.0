@@ -10,7 +10,7 @@ describe('compliance middleware', () => {
   beforeEach(() => {
     if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
     // clear log file
-    const lf = path.join(logDir, 'requests.log');
+    const lf = path.join(logDir, 'compliance.log');
     if (fs.existsSync(lf)) fs.unlinkSync(lf);
   });
 
@@ -21,7 +21,7 @@ describe('compliance middleware', () => {
 
     const res = await request(app).get('/ok');
     expect(res.status).toBe(200);
-    const lf = path.join(logDir, 'requests.log');
+    const lf = path.join(logDir, 'compliance.log');
     const content = fs.readFileSync(lf, 'utf8');
     expect(content).toMatch(/"method":"GET"/);
   });
