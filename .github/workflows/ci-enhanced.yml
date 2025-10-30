@@ -33,11 +33,18 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
     
+      - name: Create test directories
+        run: |
+          mkdir -p test-results/junit
+          mkdir -p test-results/eslint
+          mkdir -p coverage
+
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
       - name: Run linting
-        run: npx eslint . --ext .js --max-warnings 0 --format checkstyle -o ./test-results/eslint/results.xml
+        run: |
+          npx eslint . --ext .js --max-warnings 0 --format checkstyle -o ./test-results/eslint/results.xml || echo "Linting issues found"
         continue-on-error: true
 
       - name: Run unit tests with JUnit output

@@ -25,6 +25,7 @@
       }
     ]
   ],
+  globalSetup: '<rootDir>/tests/global-setup.js',
   testMatch: [
     '**/tests/unit/**/*.test.js',
     '**/tests/integration/**/*.test.js'
