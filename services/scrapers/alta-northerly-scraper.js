@@ -3,7 +3,7 @@
  * Specialized scraper for Alta Northerly apartment website
  */
 
-const { BaseApartmentScraper } = require('./base-apartment-scraper');
+const BaseApartmentScraper = require('./base-apartment-scraper');
 
 class AltaNortherlyScraper extends BaseApartmentScraper {
   constructor(options = {}) {
@@ -596,4 +596,4 @@ class AltaNortherlyScraper extends BaseApartmentScraper {
   }
 }
 
-module.exports = { AltaNortherlyScraper };
+module.exports = AltaNortherlyScraper;

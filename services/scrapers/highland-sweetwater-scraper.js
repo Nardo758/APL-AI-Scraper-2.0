@@ -3,7 +3,7 @@
  * Specialized scraper for Highland at Sweetwater Creek apartment website
  */
 
-const { BaseApartmentScraper } = require('./base-apartment-scraper');
+const BaseApartmentScraper = require('./base-apartment-scraper');
 
 class HighlandSweetwaterScraper extends BaseApartmentScraper {
   constructor(options = {}) {
@@ -473,4 +473,4 @@ class HighlandSweetwaterScraper extends BaseApartmentScraper {
   }
 }
 
-module.exports = { HighlandSweetwaterScraper };
+module.exports = HighlandSweetwaterScraper;

@@ -3,9 +3,9 @@
  * Manages execution, scheduling, and coordination of multiple scrapers
  */
 
-const { HighlandSweetwaterScraper } = require('./highland-sweetwater-scraper');
-const { AltaNortherlyScraper } = require('./alta-northerly-scraper');
-const { ArdenOakwoodScraper } = require('./arden-oakwood-scraper');
+const HighlandSweetwaterScraper = require('./highland-sweetwater-scraper');
+const AltaNortherlyScraper = require('./alta-northerly-scraper');
+const ArdenOakwoodScraper = require('./arden-oakwood-scraper');
 const { createClient } = require('@supabase/supabase-js');
 const EventEmitter = require('events');
 
@@ -583,4 +583,4 @@ class ScraperManager extends EventEmitter {
   }
 }
 
-module.exports = { ScraperManager };
+module.exports = ScraperManager;

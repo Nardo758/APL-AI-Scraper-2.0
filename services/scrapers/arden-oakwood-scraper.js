@@ -3,7 +3,7 @@
  * Specialized scraper for The Arden Oakwood apartment website
  */
 
-const { BaseApartmentScraper } = require('./base-apartment-scraper');
+const BaseApartmentScraper = require('./base-apartment-scraper');
 
 class ArdenOakwoodScraper extends BaseApartmentScraper {
   constructor(options = {}) {
@@ -749,4 +749,4 @@ class ArdenOakwoodScraper extends BaseApartmentScraper {
   }
 }
 
-module.exports = { ArdenOakwoodScraper };
+module.exports = ArdenOakwoodScraper;

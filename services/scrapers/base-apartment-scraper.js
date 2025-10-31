@@ -587,4 +587,4 @@ class BaseApartmentScraper extends EventEmitter {
   }
 }
 
-module.exports = { BaseApartmentScraper };
+module.exports = BaseApartmentScraper;
